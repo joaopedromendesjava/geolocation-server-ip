@@ -1,0 +1,171 @@
+openapi: 3.1.1
+info:
+  title: Geolocation API
+  version: 1.0.0
+  description: API para obter informações de geolocalização com base no endereço IP.
+
+servers:
+  - url: /
+    description: URL base da API
+
+paths:
+  /api/geolocation/v1/locate:
+    get:
+      tags:
+        - GeoLocation
+      summary: Get location data
+      description: Returns location information based on provided IP
+      operationId: getLocationIp
+      parameters:
+        - name: x-device-platform
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Platform device provided
+          example: "web"
+        - name: ip
+          in: query
+          schema:
+            type: string
+            format: ipv4
+          description: The IP of device
+          required: true
+          example: "8.8.8.8"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationResponse'
+              example:
+                ip: "8.8.8.8"
+                country:
+                  code: "BR"
+                  name: "Brazil"
+                region:
+                  code: "MG"
+                  name: "Minas Gerais"
+                city: "Belo Horizonte"
+                coordinates:
+                  latitude: -19.9167
+                  longitude: -43.9333
+                timezone: "America/Sao_Paulo"
+                isp: "Telecom Provider"
+                source: "cache"
+                timestamp: "2025-11-05T10:30:00Z"
+        '400':
+          description: Bad request (invalid IP or missing header)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "InvalidInput"
+                message: "The provided IP address is invalid or the 'x-device-platform' header is missing."
+                timestamp: "2025-11-05T10:30:00Z"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "InternalError"
+                message: "An unexpected error occurred on the server."
+                timestamp: "2025-11-05T10:30:00Z"
+
+components:
+  schemas:
+    LocationResponse:
+      type: object
+      description: Detailed geolocation information for a given IP.
+      properties:
+        ip:
+          type: string
+          format: ipv4
+          example: "8.8.8.8"
+        country:
+          $ref: '#/components/schemas/Country'
+        region:
+          $ref: '#/components/schemas/Region'
+        city:
+          type: string
+          example: "Belo Horizonte"
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        timezone:
+          type: string
+          example: "America/Sao_Paulo"
+          description: IANA Time Zone identifier.
+        isp:
+          type: string
+          example: "Telecom Provider"
+          description: Internet Service Provider name.
+        source:
+          type: string
+          example: "cache"
+          description: Data source (e.g., 'database', 'cache').
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-11-05T10:30:00Z"
+          description: UTC timestamp of the data retrieval.
+
+    Country:
+      type: object
+      description: Country details.
+      properties:
+        code:
+          type: string
+          example: "BR"
+          description: ISO 3166-1 alpha-2 country code.
+        name:
+          type: string
+          example: "Brazil"
+
+    Region:
+      type: object
+      description: Region/State details.
+      properties:
+        code:
+          type: string
+          example: "MG"
+          description: Region/State code (e.g., ISO 3166-2 code part).
+        name:
+          type: string
+          example: "Minas Gerais"
+
+    Coordinates:
+      type: object
+      description: Geographic coordinates.
+      properties:
+        latitude:
+          type: number
+          format: float
+          example: -19.9167
+          description: Latitude in decimal degrees.
+        longitude:
+          type: number
+          format: float
+          example: -43.9333
+          description: Longitude in decimal degrees.
+
+    ErrorResponse:
+      type: object
+      description: Standard error response structure.
+      properties:
+        error:
+          type: string
+          example: "BadRequest"
+          description: Short code for the type of error.
+        message:
+          type: string
+          example: "Invalid IP address format."
+          description: Human-readable message explaining the error.
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-11-05T10:30:00Z"
+          description: UTC timestamp of when the error occurred.
