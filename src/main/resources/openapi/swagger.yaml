@@ -3,13 +3,9 @@ info:
   title: Geolocation API
   version: 1.0.0
   description: API para obter informações de geolocalização com base no endereço IP.
-
-servers:
-  - url: /
-    description: URL base da API
-
+  
 paths:
-  /api/geolocation/v1/locate:
+  /geolocation/v1/locate:
     get:
       tags:
         - GeoLocation
@@ -22,6 +18,10 @@ paths:
           required: true
           schema:
             type: string
+            enum:
+              - iOS
+              - Android
+              - Web
           description: Platform device provided
           example: "web"
         - name: ip
@@ -166,6 +166,5 @@ components:
           description: Human-readable message explaining the error.
         timestamp:
           type: string
-          format: date-time
           example: "2025-11-05T10:30:00Z"
           description: UTC timestamp of when the error occurred.
