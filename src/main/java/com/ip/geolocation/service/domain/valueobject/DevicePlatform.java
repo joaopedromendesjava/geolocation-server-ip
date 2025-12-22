@@ -5,11 +5,11 @@ public enum DevicePlatform {
     WEB,
     ANDROID;
 
-    public static DevicePlatform from(String device) {
+    public static DevicePlatform from(String devicePlatform) {
         try {
-            return valueOf(device.toUpperCase());
+            return valueOf(devicePlatform);
         } catch (Exception e ){
-            throw new IllegalArgumentException("Device is invalid");
+            throw new IllegalArgumentException("Device is invalid " + devicePlatform);
         }
     }
 }
